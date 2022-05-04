@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model X.PagedList.IPagedList<Question>
+@using X.PagedList.Mvc.Core;
+
+ <h1>Admin Logged In</h1>  
+
+@if(Model.Any())
+{
+ <br />
+ <ul>
+    @foreach(var question in Model)
+    {
+     <li>
+         @Html.Raw(question.Title)
+         <div>Answers: @question.Answers.Count()</div>
+         <div>BY <b style="color: blue">@question.User.UserName </b>Reputation: @question.User.Reputation</div>
+         <div>@question.DateAsked</div>
+         <div style="display: flex;margin-bottom: 0.5rem;">
+            <div style="margin-right: 2rem;"><a asp-action="QuestionDetails" asp-route-questionId="@question.Id">Details</a></div>
+            <div><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id">Answer This Question</a></div>
+             @if(User.Identity.Name == question.User.Email)
+              {
+                 <div style="margin-left: 2rem;"><a asp-action="AddTagToQuestion" asp-route-questionId="@question.Id">Add Tag To Question</a></div>
+              }
+         </div>
+         <h3 style="margin-bottom: 2rem;"><a style="text-decoration: none;color: red;"asp-action="DeleteQuestion" asp-route-questionId="@question.Id" asp-route-questionOwnerId="@question.UserId">Delete</a></h3>
+    </li>       
+    }
+    </ul>
+}
+else
+{
+    <h2>No Question Asked Yet</h2>
+}
+
+
+<nav aria-label="Question navigation" style="
+    margin-top: 4rem;">
+    @Html.PagedListPager(Model, page => Url.Action("ShowAllQuestionsToAdmin", new {page = page}), 
+    
+    new X.PagedList.Web.Common.PagedListRenderOptions 
+    {
+        DisplayItemSliceAndTotal = false,
+        ContainerDivClasses = new[] {"navigation"},
+        LiElementClasses = new[] {"page-item"},
+        PageClasses = new[] {"page-link"},
+    })
+</nav>

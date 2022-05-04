@@ -1,0 +1,185 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Question
+
+<h2>Title: @Html.Raw(Model.Title) By <b style="color: blue;">@Model.User.Email</b></h2>
+<div>
+    @Html.Raw(Model.Description)
+</div>
+
+<div style="display:flex; margin-top:1rem">
+    <h3 style="margin-right: 2rem;"><b style="color:red">Downvote: @Model.DownvoteQuestions.Count()</b></h3>
+    <h3><b style="color:green">Upvote: @Model.UpvoteQuestions.Count()</b></h3>
+</div>
+@if(User.Identity.Name != Model.User.Email)
+{
+ <form method="get" asp-action="CreateUsersVoteForQuestion" style="margin-top: 1rem;">
+     <h3 style="color: purple;">Vote Question</h3>
+    <select asp-items="@ViewBag.userChoices" name="userChoice">
+
+    </select>
+    <input type="hidden" name="questionId" value="@Model.Id"/>
+    <button type="submit">
+        Submit
+    </button>
+</form>
+}
+
+@if(Model.User.Email == User.Identity.Name)
+{
+    <h2 style="margin-top: 1.5rem;">Tags <a style="font-size: 1rem;" asp-action="AddTagToQuestion" asp-route-questionId="@Model.Id">Add Tag To Question</a></h2>
+}else
+{
+     <h2 style="margin-top: 1.5rem;">Tags</h2>
+}
+
+    <ul>
+        @foreach(QuestionTag qt in Model.QuestionTags)
+        {
+            <li>
+                <div>
+                    <a asp-action="ShowQuestionsOfTag" asp-route-tagId="@qt.TagId">@qt.Tag.Tagname</a>
+                </div>
+            </li>
+        }
+    </ul>
+
+<h3>Question's Answers <a style="font-size: 1rem;" asp-action="AnswerQuestion" asp-route-questionId="@Model.Id">Add An Answer</a></h3>
+@if(Model.Answers.Any())
+{
+    List<Answer> answersOrderByIsCorrect = Model.Answers.OrderByDescending(a => a.IsCorrect).ToList();
+
+    @if(Model.User.Email == User.Identity.Name)
+    {
+     <ul>
+        @foreach(Answer answer in answersOrderByIsCorrect)
+        {
+            <li style="margin-top: 4rem;">
+                <div><h3>@Html.Raw(answer.IsCorrect == true ? "<b style=\"color:green\">(Correct)</b> " : "")Answer:</h3> @Html.Raw(answer.AnswerContent)</div>
+                <div  style="margin-top:1rem">@answer.DateAnswered</div>
+                <div style="color: blue;font-weight: bold;">By @answer.User.Email</div>
+                <h4 style="margin-top: 0.5rem;color: darkblue;">Comments <a style="font-size: 1rem;" asp-action="CommentOnAnswer" asp-route-answerId="@answer.Id">Add A Comment</a></h4>
+                @if(answer.AnswerComments.Any())
+                {
+                 <ul>
+                    @foreach(AnswerComment ac in answer.AnswerComments)
+                     {
+                       <li>
+                         @Html.Raw(ac.Comment) By <b style="color: purple;">@ac.User.Email</b>
+                         <div>
+                            @ac.DateCommented
+                         </div>
+                       </li>
+                     }
+                  </ul>
+                }else
+                {
+                    <div>No Comments Yet</div>
+                }
+                @if(answer.User.Email != User.Identity.Name)
+                {
+                  <form method="get" asp-action="CreateUsersVoteForAnswer" style="margin-top: 1rem;">
+                      <h3 style="color: purple;">Vote Answer</h3>
+                    <select asp-items="@ViewBag.userChoices" name="userChoice">
+
+                    </select>
+                    <input type="hidden" name="answerId" value="@answer.Id"/>
+                    <button type="submit">
+                     Vote
+                    </button>
+                  </form>
+                }
+                  <form method="get" asp-action="MakeAnswerCorrect" style="margin-top: 1rem;">
+                    <input type="hidden" name="questionId" value="@Model.Id"/>
+                    <input type="hidden" name="answerId" value="@answer.Id"/>
+                    <h3 style="color: purple;">Click If Answer Is Correct</h3>
+                    <button type="submit">
+                     Correct Answer
+                    </button>
+                  </form>
+
+                  <div style="display:flex; margin-top:1rem">
+                    <h4 style="margin-right: 2rem;"><b style="color:red">Downvote: @answer.DownvoteAnswers.Count()</b></h4>
+                    <h4><b style="color:green">Upvote: @answer.UpvoteAnswers.Count()</b></h4>
+                 </div>
+            </li>
+        }
+        </ul>
+    } else
+    {
+      <ul>
+        @foreach(Answer answer in answersOrderByIsCorrect)
+        {
+            <li style="margin-top: 4rem;">
+                <div><h3>@Html.Raw(answer.IsCorrect == true ? "<b style=\"color:green\">(Correct)</b> " : "")Answer:</h3> @Html.Raw(answer.AnswerContent)</div>
+                <div  style="margin-top:1rem">@answer.DateAnswered</div>
+                <div style="color: blue;font-weight: bold;">By @answer.User.Email</div>
+                <h4 style="margin-top: 0.5rem;color: darkblue;">Comments <a style="font-size: 1rem;" asp-action="CommentOnAnswer" asp-route-answerId="@answer.Id">Add A Comment</a></h4>
+                @if(answer.AnswerComments.Any())
+                {
+                  <ul>
+                    @foreach(AnswerComment ac in answer.AnswerComments)
+                     {
+                       <li>
+                         @Html.Raw(ac.Comment) By <b style="color: purple;">@ac.User.Email</b>
+                         <div>
+                            @ac.DateCommented
+                         </div>
+                       </li>
+                     }
+                  </ul>
+                }else
+                {
+                    <div>No Comments Yet</div>
+                }
+                @if(answer.User.Email != User.Identity.Name)
+                {
+                  <form method="get" asp-action="CreateUsersVoteForAnswer" style="margin-top: 1rem;">
+                      <h3 style="color: purple;">Vote Answer</h3>
+                    <select asp-items="@ViewBag.userChoices" name="userChoice">
+
+                    </select>
+                    <input type="hidden" name="answerId" value="@answer.Id"/>
+                    <button type="submit">
+                     Vote
+                    </button>
+                  </form>
+                }
+                 <div style="display:flex; margin-top:1rem">
+                    <h4 style="margin-right: 2rem;"><b style="color:red">Downvote: @answer.DownvoteAnswers.Count()</b></h4>
+                    <h4><b style="color:green">Upvote: @answer.UpvoteAnswers.Count()</b></h4>
+                 </div>
+            </li>
+        }
+    </ul>
+    }
+}
+else
+{
+    <div>No Answers Yet</div>
+}
+
+<h3 style="margin-top: 3rem;">Question's Comments <a style="font-size: 1rem;" asp-action="CommentOnQuestion" asp-route-questionId="@Model.Id">Add A Comment</a></h3>
+@if(Model.QuestionComments.Any())
+{
+    <ul>
+        @foreach(QuestionComment qc in Model.QuestionComments)
+        {
+            <li style="margin-top: 1.5rem;">
+                @Html.Raw(qc.Comment) By <b style="color: purple;">@qc.User.Email</b>
+                <div>
+                    @qc.DateCommented
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div>No Comments Yet</div>
+}
+
+<h3 style="margin-top: 6rem;"><a asp-action="Index">Back To Main</a></h3>

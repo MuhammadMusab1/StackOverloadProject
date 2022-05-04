@@ -1,0 +1,27 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Question
+
+<h4><b>Question:</b> @Html.Raw(Model.Description)</h4>
+<div style="color: blue;">By @Model.User.Email</div>
+
+<h2 style="margin-top: 1.5rem">Tags On</h2>
+<ul style="margin-bottom: 2rem">
+    @foreach(QuestionTag qt in Model.QuestionTags)
+    {
+        <li>@qt.Tag.Tagname</li>
+    }
+</ul>
+
+<form method="post" asp-action="AddTagToQuestion">
+    <select asp-items="@ViewBag.tagList" name="tagId">
+
+    </select>
+    <input type="hidden" name="questionId" value="@Model.Id"/>
+    <button type="submit">
+        Add
+    </button>
+</form>

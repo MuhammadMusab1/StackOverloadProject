@@ -1,0 +1,51 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Answer
+
+<!--All CSS stylesheet go at the top of the page-->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+<!--The place you want to have the text editor in I chose a form you can have input or even a div-->
+<h4><b>Answer:</b> @Html.Raw(Model.AnswerContent)</h4>
+<div style="color: blue;">By @Model.User.Email</div>
+
+<form asp-method="post" asp-action="CommentOnAnswer">
+    <h3>Write Your Comment for this Answer</h3>
+    <textarea id="summernote" name="userComment">
+
+    </textarea>
+    <input type="hidden" name="answerId" value="@Model.Id"/>
+    <button type="submit">
+        Submit
+    </button>
+</form>
+
+<!--Add Scripts in this section -->
+
+@section Scripts {
+        <!--JQuery and Bootstrap scripts come first-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+     <!-- Then add summernote script-->
+
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+    <!-- Then add the final script-->
+
+    <script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+          height: 150,                 // set editor height
+          minHeight: null,             // set minimum height of editor
+          maxHeight: null,             // set maximum height of editor
+          focus: true                  // set focus to editable area after initializing summernote
+        });
+    });
+    </script>
+}
