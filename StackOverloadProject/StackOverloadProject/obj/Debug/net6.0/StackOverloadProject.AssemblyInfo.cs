@@ -11,7 +11,6 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-StackOverloadProject-05B77875-2AAB-4B66-A2FB-5689ADF96228")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("StackOverloadProject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
